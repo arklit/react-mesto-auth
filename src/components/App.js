@@ -11,7 +11,7 @@ import Login from './Login';
 import InfoTooltip from './InfoTooltip';
 import Register from './Register';
 import * as auth from '../utils/auth'
-import { Route, Switch, useHistory } from 'react-router-dom';
+import { Route, Switch, useHistory, Redirect } from 'react-router-dom';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import ProtectedRoute from './ProtectedRoute';
 
@@ -29,13 +29,15 @@ function App() {
   const history = useHistory();
 
   React.useEffect(() => {
+    if(loggedIn) {
     Promise.all([api.getUserInfo(), api.getInitialCards()])
       .then(([userData, data]) => {
         setCurrentUser(userData);
         setCards(data);
       })
       .catch((error) => console.log(error));
-  }, []);
+    }
+  }, [loggedIn]);
 
   function handleCardLike(card) {
     const isLiked = card.likes.some((like) => like._id === currentUser._id);
@@ -186,6 +188,9 @@ function App() {
             onCardClick={handleCardClick}
             cards={cards}
           />
+          <Route path="*">
+            {loggedIn ? <Redirect to="/"/> : <Redirect to="/sign-in"/>}
+          </Route>
         </Switch>
         <Footer />
         <InfoTooltip
