@@ -177,7 +177,9 @@ function App() {
           <Route path="/sign-up">
             <Register onRegister={handleRegister}/>
           </Route>
-          <ProtectedRoute path='/'
+          <ProtectedRoute
+            exact
+            path='/'
             loggedIn={loggedIn}
             component={Main}
             onCardLike={handleCardLike}
